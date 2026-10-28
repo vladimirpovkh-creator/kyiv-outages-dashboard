@@ -3,6 +3,10 @@ on:
   schedule:
     - cron: '30 17 * * *'
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/dtek-check.yml'
+      - 'scripts/check_dtek.py'
 permissions:
   contents: write
 jobs:
