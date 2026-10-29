@@ -1,0 +1,29 @@
+name: Archive regional outage schedules
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 5,17 * * *'
+permissions:
+  contents: write
+concurrency:
+  group: archive-outages
+  cancel-in-progress: false
+jobs:
+  archive:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Save validated provider-derived schedules
+        run: python scripts/archive_history.py
+      - name: Commit changed history
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/history.json
+          if ! git diff --staged --quiet; then
+            git commit -m "Update verified rolling 90-day history"
+            git push
+          fi
