@@ -1,6 +1,10 @@
 name: Archive regional outage schedules
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/archive-history.yml"
+      - "scripts/archive_history.py"
   schedule:
     - cron: '30 5,17 * * *'
 permissions:
