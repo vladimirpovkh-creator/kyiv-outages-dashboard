@@ -1,9 +1,10 @@
 {
   "state": "unknown",
   "changed_at": null,
-  "checked_at": null,
+  "checked_at": "2026-10-30T18:22:33.881072+00:00",
   "source": "https://t.me/s/svitlobot_daniya",
   "group": "5.2",
   "place": "ЖК Данія",
-  "reason": "Очікується перша автоматична перевірка"
-}
+  "reason": "Немає доступних однозначних подій зі штампом часу",
+  "observed_at": null
+}\n
