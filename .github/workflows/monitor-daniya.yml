@@ -6,7 +6,7 @@ on:
       - 'scripts/monitor_daniya.py'
       - '.github/workflows/monitor-daniya.yml'
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '2-59/5 * * * *'
 permissions:
   contents: write
 concurrency:
@@ -15,13 +15,16 @@ concurrency:
 jobs:
   monitor:
     runs-on: ubuntu-latest
+    timeout-minutes: 4
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - name: Inspect public Telegram messages
-        run: python scripts/monitor_daniya.py
+        run: |
+          python scripts/monitor_daniya.py
+          python -m json.tool data/daniya-status.json > /dev/null
       - name: Publish latest verification
         run: |
           git config user.name "github-actions[bot]"
