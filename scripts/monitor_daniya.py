@@ -14,13 +14,13 @@ class Messages(HTMLParser):
         d=dict(attrs);classes=d.get("class","").split()
         if "tgme_widget_message_wrap" in classes and self.current is None:
             self.current={"text":"","time":None,"id":None};self.depth=1
-        elif self.current is not None:self.depth+=1
+        elif self.current is not None and tag not in {"br","img","meta","link","input","hr","source","wbr"}:self.depth+=1
         if self.current is not None:
             if "tgme_widget_message_text" in classes:self.in_text=self.depth
             if tag=="time" and d.get("datetime"):self.current["time"]=d["datetime"]
             if d.get("data-post"):self.current["id"]=d["data-post"]
     def handle_endtag(self,tag):
-        if self.current is None:return
+        if self.current is None or tag in {"br","img","meta","link","input","hr","source","wbr"}:return
         if self.in_text==self.depth:self.in_text=0
         self.depth-=1
         if self.depth==0:
