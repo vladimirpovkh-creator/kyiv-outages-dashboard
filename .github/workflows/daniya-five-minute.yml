@@ -1,0 +1,35 @@
+name: Daniya 5-minute scheduled monitor
+on:
+  schedule:
+    - cron: '2,7,12,17,22,27,32,37,42,47,52,57 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: monitor-daniya
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Read public channel and validate payload
+        run: |
+          python scripts/monitor_daniya.py
+          python -m json.tool data/daniya-status.json > /dev/null
+      - name: Commit latest status
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/daniya-status.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update Daniya five-minute status"
+            git pull --rebase
+            git push
+          fi
