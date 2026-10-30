@@ -30,8 +30,8 @@ class Messages(HTMLParser):
 
 def classify(s):
     s=" ".join(s.lower().split())
-    on=[r"\\bсвітло\\s+(?:є|з'явилось|з’явилось|з'явилося|з’явилося|відновлено|увімкнули)\\b",r"\\bелектропостачання\\s+відновлено\\b",r"\\b(?:світло|електрику)\\s+(?:дали|увімкнули)\\b"]
-    off=[r"\\b(?:немає|нема|відсутнє)\\s+світла\\b",r"\\bсвітло\\s+(?:зникло|вимкнули|відключили|відсутнє)\\b",r"\\bвідключення\\s+електроенергії\\b"]
+    on=[r"\bсвітло\s+(?:є|з'явилось|з’явилось|з'явилося|з’явилося|відновлено|увімкнули)\b",r"\bелектропостачання\s+відновлено\b",r"\b(?:світло|електрику)\s+(?:дали|увімкнули)\b"]
+    off=[r"\b(?:немає|нема|відсутнє)\s+світла\b",r"\bсвітло\s+(?:зникло|вимкнули|відключили|відсутнє)\b",r"\bвідключення\s+електроенергії\b"]
     a=any(re.search(p,s) for p in on);b=any(re.search(p,s) for p in off)
     return "on" if a and not b else "off" if b and not a else None
 
@@ -61,5 +61,5 @@ try:
 except Exception as e:
     result["reason"]="Джерело тимчасово недоступне: "+type(e).__name__
 OUT.parent.mkdir(parents=True,exist_ok=True)
-OUT.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\\n",encoding="utf-8")
+OUT.write_text(json.dumps(result,ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 print(result)
