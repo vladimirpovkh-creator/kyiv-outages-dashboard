@@ -1,0 +1,39 @@
+name: Test independent Svitlo Live DTEK backup
+on:
+  push:
+    paths:
+      - '.github/workflows/test-svitlo-backup.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Test live 5.2 backup data
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json,urllib.request,datetime as dt
+          from zoneinfo import ZoneInfo
+          url='https://dtek-api.svitlo-proxy.workers.dev/'
+          try:
+              req=urllib.request.Request(url,headers={'User-Agent':'KyivOutagesDashboard/1.0'})
+              with urllib.request.urlopen(req,timeout=25) as r:
+                  raw=json.load(r)
+              data=json.loads(raw['body']) if isinstance(raw.get('body'),str) else raw
+              print('HTTP OK, top keys:',list(data.keys()))
+              print('Dates:',data.get('date_today'),data.get('date_tomorrow'))
+              print('Checked at UTC:',dt.datetime.now(dt.timezone.utc).isoformat())
+              region=next((x for x in data.get('regions',[]) if x.get('cpu') in ('kiivska-oblast','kyivska-oblast')),None)
+              if not region:raise ValueError('Kyiv oblast region absent')
+              print('Region:',region.get('cpu'),'Groups:',list(region.get('schedule',{}).keys()))
+              g=region.get('schedule',{}).get('5.2')
+              if not isinstance(g,dict):raise ValueError('5.2 absent')
+              for date,values in g.items():
+                  print('5.2 date',date,'slots',len(values),'sample',list(values.items())[:3])
+              print('VALID_52',any(isinstance(v,dict) and len(v)>=24 for v in g.values()))
+          except Exception as e:
+              print('BACKUP_CHECK_FAILED',type(e).__name__,str(e)[:500]);raise
+          PY
