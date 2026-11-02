@@ -36,7 +36,15 @@ function checkDaniya() {
       const isOff = /(?:немає|нема|відсутнє)\s+світла(?=\s|$|[.,!?:;])|світло\s+(?:зникло|вимкнули|відключили|відсутнє)(?=\s|$|[.,!?:;])|відключення\s+електроенергії(?=\s|$|[.,!?:;])/u.test(text);
       const ts = Date.parse(time);
       if (isOn === isOff || !Number.isFinite(ts) || ts > Date.now() + 300000) continue;
-      events.push({ts, state: isOn ? 'on' : 'off', id});
+      // A repeat notification is not necessarily a new state transition.
+      // If the notification itself states a duration, derive the beginning from it.
+      let durationMinutes = null;
+      const durationText = text.match(/(?:вже|триває|протягом)\\s*(?:(\\d+)\\s*(?:год(?:ин(?:и)?)?|г\\.)\\s*)?(?:(\\d+)\\s*(?:хв(?:илин(?:и)?)?|хв\\.))?/u);
+      if (durationText && (durationText[1] || durationText[2])) {
+        durationMinutes = Number(durationText[1] || 0) * 60 + Number(durationText[2] || 0);
+        if (durationMinutes <= 0 || durationMinutes > 24 * 60) durationMinutes = null;
+      }
+      events.push({ts, state: isOn ? 'on' : 'off', id, durationMinutes});
     }
     events.sort((a,b) => b.ts-a.ts);
     if (!events.length || Date.now()-events[0].ts > 86400000) {
@@ -44,10 +52,38 @@ function checkDaniya() {
       return;
     }
     const top = events[0];
+    // Keep the latest confirmed state, but never reset its duration when another
+    // message about that same state is posted.
+    const sameRun = [];
+    for (const event of events) {
+      if (event.state !== top.state) break;
+      sameRun.push(event);
+    }
+    let changedMs = sameRun[sameRun.length - 1].ts;
+    let method = 'first_same_state_message';
+    for (const event of sameRun) {
+      if (event.durationMinutes !== null) {
+        const derived = event.ts - event.durationMinutes * 60000;
+        // A reported duration should agree with the observed message history.
+        if (derived <= changedMs && derived > event.ts - 86400000) {
+          changedMs = derived;
+          method = 'reported_duration';
+        }
+      }
+    }
+    // Preserve a previously observed transition when it is the same uninterrupted state.
+    const previousMs = Date.parse(prev.changed_at || '');
+    const latestOpposite = events.find(event => event.state !== top.state);
+    if (prev.state === top.state && Number.isFinite(previousMs) &&
+        (!latestOpposite || previousMs > latestOpposite.ts) &&
+        previousMs <= changedMs && previousMs <= top.ts && top.ts - previousMs < 86400000) {
+      changedMs = previousMs;
+      method = 'previous_confirmed_transition';
+    }
     props.setProperty(KEY, JSON.stringify({
-      state:top.state, changed_at:new Date(top.ts).toISOString(), observed_at:new Date(top.ts).toISOString(),
+      state:top.state, changed_at:new Date(changedMs).toISOString(), observed_at:new Date(top.ts).toISOString(),
       checked_at:now, source:CHANNEL, source_status:'ok', group:'5.2', place:'ЖК Данія',
-      message_id:top.id, reason:'Публічне повідомлення Telegram'
+      message_id:top.id, time_method:method, reason:'Публічне повідомлення Telegram'
     }));
   } catch (error) {
     // Do not make a failed network request look like a successful fresh check.
