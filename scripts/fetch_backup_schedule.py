@@ -20,7 +20,8 @@ if isinstance(raw.get("body"), str):
     raw = json.loads(raw["body"])
 region = next((r for r in raw.get("regions", []) if r.get("cpu") == "kiivska-oblast"), None)
 if not region or region.get("emergency"):
-    raise ValueError("Region missing or emergency schedule active")
+    print("SKIP: No usable regional schedule; retaining previous data")
+    exit(0)
 schedule = region.get("schedule", {})
 groups = [f"{i}.{j}" for i in range(1,7) for j in (1,2)]
 data = {}
@@ -48,7 +49,8 @@ for day in (today, today+dt.timedelta(days=1)):
     if len(normalized) == 12:
         data[date] = normalized
 if not data:
-    raise ValueError("No complete schedules for Kyiv region")
+    print("SKIP: No complete schedules; retaining previous data")
+    exit(0)
 OUT.parent.mkdir(exist_ok=True)
 OUT.write_text(json.dumps({"source": SOURCE,"checked_at":now.isoformat(),"days":data,"note":"Independent source; validated complete 48-slot schedules, not proof of official freshness."},ensure_ascii=False,indent=2)+"\n",encoding="utf-8")
 print("Valid schedules:", list(data))
