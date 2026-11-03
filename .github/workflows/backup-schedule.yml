@@ -1,6 +1,8 @@
 name: Fetch independent DTEK schedule backup
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '13,43 * * * *'
 permissions:
   contents: write
 concurrency:
