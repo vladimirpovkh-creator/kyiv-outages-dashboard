@@ -1,11 +1,11 @@
 {
-  "state": "off",
-  "changed_at": "2026-11-03T21:39:42+00:00",
-  "checked_at": "2026-11-04T06:24:26.117168+00:00",
+  "state": "on",
+  "changed_at": "2026-11-04T06:44:34+00:00",
+  "checked_at": "2026-11-04T07:43:12.335812+00:00",
   "source": "https://t.me/s/svitlobot_daniya",
   "group": "5.2",
   "place": "ЖК Данія",
   "reason": "Публічне повідомлення Telegram",
-  "observed_at": "2026-11-03T21:39:42+00:00",
-  "message_id": "svitlobot_daniya/2437"
+  "observed_at": "2026-11-04T06:44:34+00:00",
+  "message_id": "svitlobot_daniya/2440"
 }
