@@ -41,14 +41,15 @@ class DashboardChecks(unittest.TestCase):
     def test_archive_52_historical_telegram_stats(self):
         self.assertIn('className="ranking-fact"', HTML)
         self.assertIn('if(r.group==="5.2"){const fact=', HTML)
-        self.assertIn('Факт за період (Telegram): світло було', HTML)
-        self.assertIn('не було ', HTML)
-        self.assertIn('невідомо ', HTML)
+        self.assertIn('Факт за період: світло не було ', HTML)
+        self.assertIn(' · було ', HTML)
+        self.assertIn(' · (невідомо ', HTML)
         self.assertIn('data/forum-prazkyi-actual-history.json?t=', HTML)
         self.assertIn('setInterval(loadForumHistory,30*60*1000)', HTML)
         self.assertIn('archiveDates=dates;', HTML)
         self.assertIn('Світла не було ', HTML)
         self.assertNotIn('Факт зараз (Telegram):', HTML)
+        self.assertNotIn('Графіки ДТЕК · повідомлення ЖК «Форум Празький»', HTML)
         self.assertIn('data/forum-prazkyi-status.json', HTML)
 
     def test_existing_components(self):
