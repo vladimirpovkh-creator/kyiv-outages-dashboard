@@ -41,7 +41,7 @@ class DashboardChecks(unittest.TestCase):
     def test_archive_52_historical_telegram_stats(self):
         self.assertIn('className="ranking-fact"', HTML)
         self.assertIn('if(r.group==="5.2"){const fact=', HTML)
-        self.assertIn('Факт за період: світла не було ', HTML)
+        self.assertIn('Фактично світла не було ', HTML)
         self.assertIn('в середньому ', HTML)
         self.assertIn('n(off/archiveDates.length)', HTML)
         self.assertNotIn('n(on/archiveDates.length)', HTML)
