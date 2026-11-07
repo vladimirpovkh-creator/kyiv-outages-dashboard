@@ -154,9 +154,9 @@ def main():
     if not all(os.environ.get(k) for k in required):
         raise RuntimeError("Required Telegram session secrets missing")
     events, examined, reached = asyncio.run(read_events(dates[0], now))
-    if not reached:
+    if not reached and examined >= MAX_MESSAGES:
         raise RuntimeError(
-            "Telegram history pagination stopped before archive boundary; "
+            "Telegram message limit reached before archive boundary; "
             "cannot certify archive coverage"
         )
     result = build_result(dates, events, now, examined, reached)
