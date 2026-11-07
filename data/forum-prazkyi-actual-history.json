@@ -1,0 +1,86 @@
+{
+  "source": "ForumPrazkyi / тема 63",
+  "group": "5.2",
+  "topic_id": 63,
+  "updated_at": "2026-11-07T17:28:37.256423+00:00",
+  "period_start": "2026-10-29",
+  "period_end": "2026-11-06",
+  "method": "explicit_switch_messages_and_bounded_intervals",
+  "max_unconfirmed_interval_hours": 12.0,
+  "messages_examined": 115,
+  "switch_events_found": 74,
+  "reached_archive_boundary": true,
+  "days": {
+    "2026-10-29": {
+      "on_hours": 12.1953,
+      "off_hours": 10.2275,
+      "unknown_hours": 1.5772,
+      "day_hours": 24.0,
+      "covered_hours": 22.4228
+    },
+    "2026-10-30": {
+      "on_hours": 11.2411,
+      "off_hours": 12.7589,
+      "unknown_hours": 0.0,
+      "day_hours": 24.0,
+      "covered_hours": 24.0
+    },
+    "2026-10-31": {
+      "on_hours": 17.3167,
+      "off_hours": 6.6833,
+      "unknown_hours": 0.0,
+      "day_hours": 24.0,
+      "covered_hours": 24.0
+    },
+    "2026-11-01": {
+      "on_hours": 19.4022,
+      "off_hours": 4.5978,
+      "unknown_hours": 0.0,
+      "day_hours": 24.0,
+      "covered_hours": 24.0
+    },
+    "2026-11-02": {
+      "on_hours": 10.1475,
+      "off_hours": 13.8525,
+      "unknown_hours": 0.0,
+      "day_hours": 24.0,
+      "covered_hours": 24.0
+    },
+    "2026-11-03": {
+      "on_hours": 13.2781,
+      "off_hours": 10.7219,
+      "unknown_hours": 0.0,
+      "day_hours": 24.0,
+      "covered_hours": 24.0
+    },
+    "2026-11-04": {
+      "on_hours": 3.9567,
+      "off_hours": 20.0433,
+      "unknown_hours": 0.0,
+      "day_hours": 24.0,
+      "covered_hours": 24.0
+    },
+    "2026-11-05": {
+      "on_hours": 9.2528,
+      "off_hours": 14.7472,
+      "unknown_hours": 0.0,
+      "day_hours": 24.0,
+      "covered_hours": 24.0
+    },
+    "2026-11-06": {
+      "on_hours": 4.0908,
+      "off_hours": 19.9092,
+      "unknown_hours": 0.0,
+      "day_hours": 24.0,
+      "covered_hours": 24.0
+    }
+  },
+  "totals": {
+    "on_hours": 100.881,
+    "off_hours": 113.542,
+    "unknown_hours": 1.577,
+    "day_hours": 216.0,
+    "covered_hours": 214.423
+  },
+  "note": "Оцінка лише за повідомленнями про фактичне перемикання світла; непідтверджені проміжки враховані як невідомі. Це не дані лічильника."
+}
