@@ -1,14 +1,12 @@
-name: Monitor Daniya public Telegram status
+name: Forum Prazkyi topic 63 power monitor
 on:
+  schedule:
+    - cron: '3,8,13,18,23,28,33,38,43,48,53,58 * * * *'
   workflow_dispatch:
-  push:
-    paths:
-      - 'scripts/monitor_daniya.py'
-      - '.github/workflows/monitor-daniya.yml'
 permissions:
   contents: write
 concurrency:
-  group: monitor-daniya
+  group: forum-prazkyi-monitor
   cancel-in-progress: false
 jobs:
   monitor:
@@ -19,17 +17,19 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Inspect public Telegram messages
+      - name: Read topic messages
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         run: |
-          python scripts/monitor_daniya.py
-          python -m json.tool data/daniya-status.json > /dev/null
-      - name: Publish latest verification
+          python scripts/monitor_forum_prazkyi.py
+          python -m json.tool data/forum-prazkyi-status.json > /dev/null
+      - name: Publish validated status
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/daniya-status.json
+          git add data/forum-prazkyi-status.json
           if ! git diff --staged --quiet; then
-            git commit -m "Refresh Daniya public monitor status"
+            git commit -m "Refresh Forum Prazkyi power status"
             git pull --rebase
             git push
           fi
