@@ -42,6 +42,28 @@ def request_updates(token, offset):
         raise ValueError("Telegram returned an invalid response")
     return data["result"]
 
+async def fetch_user_topic_messages():
+    """Read recent replies of forum topic 63 via an authorized member session."""
+    from telethon import TelegramClient
+    from telethon.sessions import StringSession
+    api_id = int(os.environ["TELEGRAM_API_ID"])
+    api_hash = os.environ["TELEGRAM_API_HASH"]
+    session = os.environ["TELEGRAM_SESSION"]
+    out = []
+    async with TelegramClient(StringSession(session), api_id, api_hash) as client:
+        if not await client.is_user_authorized():
+            raise PermissionError("Telegram session is not authorized")
+        entity = await client.get_entity("ForumPrazkyi")
+        async for msg in client.iter_messages(entity, limit=100, reply_to=TOPIC_ID):
+            reply = getattr(msg, "reply_to", None)
+            # Telegram forum messages have top_msg_id=topic ID.
+            top = getattr(reply, "reply_to_top_id", None) if reply else None
+            root = getattr(reply, "reply_to_msg_id", None) if reply else None
+            if top != TOPIC_ID and root != TOPIC_ID:
+                continue
+            out.append((msg.date, classify(msg.raw_text or ""), msg.id))
+    return out
+
 def main():
     now = dt.datetime.now(dt.timezone.utc)
     previous = {}
@@ -56,9 +78,28 @@ def main():
         "reason": "Немає перевірених повідомлень у темі «Світло»",
         "message_id": None, "last_update_id": int(previous.get("last_update_id") or 0),
     }
+    user_config = all(os.environ.get(key) for key in ("TELEGRAM_API_ID", "TELEGRAM_API_HASH", "TELEGRAM_SESSION"))
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "")
-    if not token:
-        result["reason"] = "Telegram-бот не налаштований"
+    if user_config:
+        try:
+            import asyncio
+            messages = asyncio.run(fetch_user_topic_messages())
+            candidates = []
+            for stamp, kind, mid in messages:
+                if stamp.tzinfo is None:
+                    stamp = stamp.replace(tzinfo=dt.timezone.utc)
+                if kind and now - MAX_AGE <= stamp <= now + dt.timedelta(minutes=5):
+                    candidates.append((stamp, kind, mid))
+            if candidates:
+                stamp, kind, mid = max(candidates, key=lambda item: (item[0], item[2]))
+                result.update(state=kind, changed_at=stamp.isoformat(), message_id=mid,
+                              reason="Підтверджене повідомлення Telegram-теми 63")
+            else:
+                result["reason"] = "Немає однозначного повідомлення в темі за останні 12 годин"
+        except Exception as exc:
+            result["reason"] = "Читання теми не вдалося: " + type(exc).__name__
+    elif not token:
+        result["reason"] = "Потрібна авторизована Telegram-сесія учасника"
     else:
         try:
             last = result["last_update_id"]
