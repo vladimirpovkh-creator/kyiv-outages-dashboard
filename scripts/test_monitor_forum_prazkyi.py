@@ -11,11 +11,13 @@ class ClassificationTests(unittest.TestCase):
     def test_on(self):
         self.assertEqual(module.classify("Світло є"), "on")
         self.assertEqual(module.classify("Світло дали"), "on")
+        self.assertEqual(module.classify("💡 Світло увімкнулось!"), "on")
     def test_off(self):
         self.assertEqual(module.classify("Світла немає"), "off")
         self.assertEqual(module.classify("Світло вимкнули"), "off")
+        self.assertEqual(module.classify("🔌 Світло вимкнулось!"), "off")
     def test_uncertain(self):
-        for message in ("Коли буде світло?", "Світло є?", "За графіком світло є", "Світло є, але світла немає", ""):
+        for message in ("Коли буде світло?", "Світло є?", "За графіком світло є", "Світло є, але світла немає", "⚡ ОНОВЛЕНИЙ ГРАФІК ВІДКЛЮЧЕНЬ", ""):
             with self.subTest(message=message):
                 self.assertIsNone(module.classify(message))
     def test_topic(self):
