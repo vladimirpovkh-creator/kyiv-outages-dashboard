@@ -38,15 +38,18 @@ class DashboardChecks(unittest.TestCase):
         self.assertIn('el("forumTopState").textContent=is52?state', HTML)
         self.assertIn('data/forum-prazkyi-status.json', HTML)
 
-    def test_archive_52_live_status_not_mixed_with_plan(self):
+    def test_archive_52_historical_telegram_stats(self):
         self.assertIn('className="ranking-fact"', HTML)
         self.assertIn('if(r.group==="5.2"){const fact=', HTML)
-        self.assertIn('Факт зараз (Telegram):', HTML)
-        self.assertIn('now-t<12*3600000&&now-c<30*60000', HTML)
-        self.assertIn('setInterval(loadForumActual,5*60*1000)', HTML)
-        self.assertIn('не архівний підрахунок', HTML)
+        self.assertIn('Факт за період (Telegram): світло було', HTML)
+        self.assertIn('не було ', HTML)
+        self.assertIn('невідомо ', HTML)
+        self.assertIn('data/forum-prazkyi-actual-history.json?t=', HTML)
+        self.assertIn('setInterval(loadForumHistory,30*60*1000)', HTML)
+        self.assertIn('archiveDates=dates;', HTML)
         self.assertIn('Світла не було ', HTML)
-        self.assertIn('data/forum-prazkyi-status.json?t=', HTML)
+        self.assertNotIn('Факт зараз (Telegram):', HTML)
+        self.assertIn('data/forum-prazkyi-status.json', HTML)
 
     def test_existing_components(self):
         for section in ('id="dailySchedules"', 'id="archiveTitle"', 'data/forum-prazkyi-status.json'):
