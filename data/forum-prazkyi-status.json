@@ -1,11 +1,11 @@
 {
   "state": "unknown",
   "changed_at": null,
-  "checked_at": null,
+  "checked_at": "2026-11-07T14:59:39.492066+00:00",
   "source": "ForumPrazkyi / тема 63",
   "group": "5.2",
   "place": "ЖК Форум Празький",
-  "reason": "Очікування підключення Telegram-бота",
+  "reason": "Потрібна авторизована Telegram-сесія учасника",
   "message_id": null,
   "last_update_id": 0
 }
