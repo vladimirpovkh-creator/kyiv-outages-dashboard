@@ -4,6 +4,8 @@ on:
   push:
     paths:
       - 'scripts/monitor_forum_prazkyi.py'
+      - 'scripts/build_forum_actual_history.py'
+      - 'scripts/test_forum_actual_history.py'
       - 'scripts/test_monitor_forum_prazkyi.py'
       - '.github/workflows/validate-forum-monitor.yml'
   workflow_dispatch:
@@ -18,4 +20,6 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m unittest discover -s scripts -p 'test_monitor_forum_prazkyi.py' -v
+      - run: python -m unittest discover -s scripts -p 'test_forum_actual_history.py' -v
       - run: python -m py_compile scripts/monitor_forum_prazkyi.py
+      - run: python -m py_compile scripts/build_forum_actual_history.py
