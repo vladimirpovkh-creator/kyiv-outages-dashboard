@@ -20,13 +20,13 @@ def classify(text):
     if not s or "?" in s or any(x in s for x in ("за графіком", "планують", "можливо", "коли буде", "очікуємо")):
         return None
     on = (
-        r"(?:світло|електрик[ау]|електроенергію)\s+(?:є|дали|увімкнули|включили|з'явилося|з'явилось|повернулося)",
+        r"(?:світло|електрик[ау]|електроенергію)\s+(?:є|дали|увімкнули|увімкнулось|увімкнулося|включили|включилось|включилося|з'явилося|з'явилось|повернулося)\b",
         r"(?:відновили|відновлено)\s+(?:світло|електропостачання|подачу електроенергії)",
     )
     off = (
         r"(?:нема|немає|відсутнє)\s+(?:світла|електрики|електроенергії)",
         r"(?:світла|електрики|електроенергії)\s+(?:немає|нема|відсутнє)",
-        r"(?:світло|електрик[ау])\s+(?:зникло|зникла|вимкнули|відключили|пропало|відсутнє)",
+        r"(?:світло|електрик[ау])\s+(?:зникло|зникла|вимкнули|вимкнулось|вимкнулося|відключили|відключилось|відключилося|пропало|відсутнє)\b",
         r"(?:відключили|вимкнули)\s+(?:світло|електрику|електроенергію)",
     )
     a = any(re.search(p, s) for p in on)
@@ -55,12 +55,9 @@ async def fetch_user_topic_messages():
             raise PermissionError("Telegram session is not authorized")
         entity = await client.get_entity("ForumPrazkyi")
         async for msg in client.iter_messages(entity, limit=100, reply_to=TOPIC_ID):
-            reply = getattr(msg, "reply_to", None)
-            # Telegram forum messages have top_msg_id=topic ID.
-            top = getattr(reply, "reply_to_top_id", None) if reply else None
-            root = getattr(reply, "reply_to_msg_id", None) if reply else None
-            if top != TOPIC_ID and root != TOPIC_ID:
-                continue
+            # iter_messages(reply_to=TOPIC_ID) is already server-scoped
+            # to this forum topic. A second reply_to_top_id check wrongly
+            # drops replies to other messages in the same thread.
             out.append((msg.date, classify(msg.raw_text or ""), msg.id))
     return out
 
@@ -84,6 +81,8 @@ def main():
         try:
             import asyncio
             messages = asyncio.run(fetch_user_topic_messages())
+            result["topic_messages_read"] = len(messages)
+            result["topic_events_recognized"] = sum(1 for _, kind, _ in messages if kind)
             candidates = []
             for stamp, kind, mid in messages:
                 if stamp.tzinfo is None:
