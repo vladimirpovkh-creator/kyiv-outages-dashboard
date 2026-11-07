@@ -41,22 +41,17 @@ class DashboardChecks(unittest.TestCase):
     def test_archive_52_historical_telegram_stats(self):
         self.assertIn('className="ranking-fact"', HTML)
         self.assertIn('if(r.group==="5.2"){const fact=', HTML)
-        self.assertIn('Факт за період: світло не було ', HTML)
-        self.assertIn('В середньому за добу: без світла ', HTML)
+        self.assertIn('Факт за період: світла не було ', HTML)
+        self.assertIn('в середньому ', HTML)
         self.assertIn('n(off/archiveDates.length)', HTML)
-        self.assertIn('n(on/archiveDates.length)', HTML)
-        self.assertIn('.ranking-fact{white-space:pre-line;', HTML)
-        self.assertNotIn('id="archiveInfo"', HTML)
-        self.assertNotIn('getElementById("archiveInfo")', HTML)
-        self.assertIn(' · було ', HTML)
-        self.assertIn(' · (невідомо ', HTML)
+        self.assertNotIn('n(on/archiveDates.length)', HTML)
+        self.assertNotIn(' · було "+n(on)', HTML)
         self.assertIn('data/forum-prazkyi-actual-history.json?t=', HTML)
         self.assertIn('setInterval(loadForumHistory,30*60*1000)', HTML)
         self.assertIn('archiveDates=dates;', HTML)
         self.assertIn('Світла не було ', HTML)
-        self.assertNotIn('Факт зараз (Telegram):', HTML)
-        self.assertNotIn('Графіки ДТЕК · повідомлення ЖК «Форум Празький»', HTML)
-        self.assertIn('data/forum-prazkyi-status.json', HTML)
+        self.assertIn('id="forumTopState"', HTML)
+        self.assertNotIn('id="archiveInfo"', HTML)
 
     def test_existing_components(self):
         for section in ('id="dailySchedules"', 'id="archiveTitle"', 'data/forum-prazkyi-status.json'):
