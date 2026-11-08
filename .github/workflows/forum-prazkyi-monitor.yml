@@ -1,4 +1,5 @@
 name: Forum Prazkyi topic 63 power monitor
+# Manual reconciliation after delayed GitHub scheduled runs on 2026-11-08.
 on:
   schedule:
     - cron: '1,6,11,16,21,26,31,36,41,46,51,56 * * * *'
