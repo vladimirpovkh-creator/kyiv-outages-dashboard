@@ -2,12 +2,12 @@
   "source": "ForumPrazkyi / тема 63",
   "group": "5.2",
   "topic_id": 63,
-  "updated_at": "2026-11-07T19:00:27.040306+00:00",
+  "updated_at": "2026-11-08T01:25:38.830918+00:00",
   "period_start": "2026-10-29",
-  "period_end": "2026-11-06",
+  "period_end": "2026-11-07",
   "method": "explicit_switch_messages_and_bounded_intervals",
   "max_unconfirmed_interval_hours": 12.0,
-  "messages_examined": 115,
+  "messages_examined": 117,
   "switch_events_found": 74,
   "reached_archive_boundary": true,
   "days": {
@@ -73,14 +73,21 @@
       "unknown_hours": 0.0,
       "day_hours": 24.0,
       "covered_hours": 24.0
+    },
+    "2026-11-07": {
+      "on_hours": 22.4378,
+      "off_hours": 1.5622,
+      "unknown_hours": 0.0,
+      "day_hours": 24.0,
+      "covered_hours": 24.0
     }
   },
   "totals": {
-    "on_hours": 100.881,
-    "off_hours": 113.542,
+    "on_hours": 123.319,
+    "off_hours": 115.104,
     "unknown_hours": 1.577,
-    "day_hours": 216.0,
-    "covered_hours": 214.423
+    "day_hours": 240.0,
+    "covered_hours": 238.423
   },
   "note": "Оцінка лише за повідомленнями про фактичне перемикання світла; непідтверджені проміжки враховані як невідомі. Це не дані лічильника."
 }
