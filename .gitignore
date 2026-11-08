@@ -1,0 +1,10 @@
+# Sensitive Telegram credentials and server runtime data
+realtime/.env
+realtime/.env.*
+!realtime/.env.example
+realtime/status.json
+*.session
+*.session-journal
+telegram_session_secret.txt
+__pycache__/
+*.pyc
