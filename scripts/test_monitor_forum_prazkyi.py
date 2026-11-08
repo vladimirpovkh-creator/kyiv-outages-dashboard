@@ -20,6 +20,10 @@ class ClassificationTests(unittest.TestCase):
         for message in ("Коли буде світло?", "Світло є?", "За графіком світло є", "Світло є, але світла немає", "⚡ ОНОВЛЕНИЙ ГРАФІК ВІДКЛЮЧЕНЬ", ""):
             with self.subTest(message=message):
                 self.assertIsNone(module.classify(message))
+    def test_verified_event_age_limit(self):
+        import datetime as dt
+        self.assertEqual(module.MAX_AGE, dt.timedelta(hours=24))
+
     def test_topic(self):
         self.assertEqual(module.TOPIC_ID, 63)
 
