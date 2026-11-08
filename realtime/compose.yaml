@@ -1,0 +1,36 @@
+services:
+  monitor:
+    build:
+      context: ..
+      dockerfile: realtime/Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - status-data:/state
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+  https:
+    image: caddy:2
+    restart: unless-stopped
+    depends_on:
+      - monitor
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      MONITOR_DOMAIN: ${MONITOR_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  status-data:
+  caddy-data:
+  caddy-config:
