@@ -32,6 +32,11 @@ class DashboardChecks(unittest.TestCase):
         ):
             self.assertNotIn(fragment, HTML)
 
+    def test_top_fact_allows_24h_old_confirmation(self):
+        self.assertIn("now-t<24*3600000", HTML)
+        self.assertNotIn("now-t<12*3600000", HTML)
+        self.assertIn("now-c<30*60000", HTML)
+
     def test_top_fact_still_works(self):
         self.assertIn('id="forumTopState"', HTML)
         self.assertIn('id="forumTopDuration"', HTML)
