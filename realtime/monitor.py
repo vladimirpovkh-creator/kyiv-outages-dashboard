@@ -105,7 +105,7 @@ class Store:
         }
 
 
-store = Store()
+store = None
 client = None
 sync_lock = asyncio.Lock()
 
@@ -145,20 +145,21 @@ def cors_headers():
 
 
 async def get_status(request):
-    data = store.payload(dt.datetime.now(UTC))
+    data = store.payload(dt.datetime.now(UTC)) if store is not None else {"state":"unknown"}
     response = web.json_response(data, headers=cors_headers())
     return response
 
 
 async def health(request):
     now = dt.datetime.now(UTC)
-    healthy = client is not None and client.is_connected() and store.last_sync is not None and now - store.last_sync < SYNC_STALE
+    healthy = client is not None and client.is_connected() and store is not None and store.last_sync is not None and now - store.last_sync < SYNC_STALE
     return web.json_response({"ok": healthy}, status=200 if healthy else 503,
                              headers={"Cache-Control": "no-store"})
 
 
 async def main():
-    global client
+    global client, store
+    store = Store()
     logging.basicConfig(level=logging.INFO)
     required = ("TELEGRAM_API_ID", "TELEGRAM_API_HASH", "TELEGRAM_SESSION")
     if not all(os.environ.get(key) for key in required):
