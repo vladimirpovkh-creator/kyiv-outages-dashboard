@@ -12,7 +12,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUTPUT = ROOT / "data" / "forum-prazkyi-status.json"
 TOPIC_ID = 63
 SOURCE = "ForumPrazkyi / тема 63"
-MAX_AGE = dt.timedelta(hours=12)
+MAX_AGE = dt.timedelta(hours=24)
 
 def classify(text):
     """Only clear state declarations, not questions or schedule predictions."""
@@ -94,7 +94,7 @@ def main():
                 result.update(state=kind, changed_at=stamp.isoformat(), message_id=mid,
                               reason="Підтверджене повідомлення Telegram-теми 63")
             else:
-                result["reason"] = "Немає однозначного повідомлення в темі за останні 12 годин"
+                result["reason"] = "Немає однозначного повідомлення в темі за останні 24 години"
         except Exception as exc:
             result["reason"] = "Читання теми не вдалося: " + type(exc).__name__
     elif not token:
