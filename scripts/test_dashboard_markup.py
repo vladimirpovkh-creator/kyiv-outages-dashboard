@@ -48,7 +48,7 @@ class DashboardChecks(unittest.TestCase):
         self.assertIn('if(r.group==="5.2"){const fact=', HTML)
         self.assertIn('Фактично світла не було ', HTML)
         self.assertIn('в середньому ', HTML)
-        self.assertIn('n(off/archiveDates.length)', HTML)
+        self.assertIn('formatActualDuration(off/archiveDates.length)', HTML)
         self.assertNotIn('n(on/archiveDates.length)', HTML)
         self.assertNotIn(' · було "+n(on)', HTML)
         self.assertIn('data/forum-prazkyi-actual-history.json?t=', HTML)
@@ -57,6 +57,16 @@ class DashboardChecks(unittest.TestCase):
         self.assertIn('Світла не було ', HTML)
         self.assertIn('id="forumTopState"', HTML)
         self.assertNotIn('id="archiveInfo"', HTML)
+
+    def test_actual_outages_use_hours_and_minutes(self):
+        self.assertIn('function formatActualDuration(hours){const minutes=Math.round(Number(hours)*60)', HTML)
+        self.assertIn('String(m).padStart(2,"0")+" хв"', HTML)
+        for field in ('off_hours', 'on_hours', 'unknown_hours'):
+            self.assertIn('formatActualDuration(d.' + field + ')', HTML)
+            self.assertIn('formatActualDuration(sum("' + field + '"))', HTML)
+        self.assertIn('formatActualDuration(sum("day_hours"))', HTML)
+        self.assertIn('formatActualDuration(off)', HTML)
+        self.assertNotIn('minimumFractionDigits:2,maximumFractionDigits:2', HTML)
 
     def test_existing_components(self):
         for section in ('id="dailySchedules"', 'id="archiveTitle"', 'data/forum-prazkyi-status.json'):
