@@ -2,13 +2,13 @@
   "source": "ForumPrazkyi / тема 63",
   "group": "5.2",
   "topic_id": 63,
-  "updated_at": "2026-11-08T18:59:56.393695+00:00",
+  "updated_at": "2026-11-09T01:28:06.350954+00:00",
   "period_start": "2026-10-29",
-  "period_end": "2026-11-07",
+  "period_end": "2026-11-08",
   "method": "explicit_switch_messages_and_bounded_intervals",
   "max_unconfirmed_interval_hours": 12.0,
-  "messages_examined": 129,
-  "switch_events_found": 85,
+  "messages_examined": 134,
+  "switch_events_found": 86,
   "reached_archive_boundary": true,
   "days": {
     "2026-10-29": {
@@ -80,14 +80,21 @@
       "unknown_hours": 0.0,
       "day_hours": 24.0,
       "covered_hours": 24.0
+    },
+    "2026-11-08": {
+      "on_hours": 2.9714,
+      "off_hours": 12.0964,
+      "unknown_hours": 8.9322,
+      "day_hours": 24.0,
+      "covered_hours": 15.0678
     }
   },
   "totals": {
-    "on_hours": 123.319,
-    "off_hours": 115.104,
-    "unknown_hours": 1.577,
-    "day_hours": 240.0,
-    "covered_hours": 238.423
+    "on_hours": 126.29,
+    "off_hours": 127.2,
+    "unknown_hours": 10.509,
+    "day_hours": 264.0,
+    "covered_hours": 253.491
   },
   "note": "Оцінка лише за повідомленнями про фактичне перемикання світла; непідтверджені проміжки враховані як невідомі. Це не дані лічильника."
 }
