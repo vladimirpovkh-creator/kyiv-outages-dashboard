@@ -38,16 +38,43 @@ class ActualHistoryTests(unittest.TestCase):
         self.assertEqual(result["unknown_hours"], 9.0)
         self.assertEqual(result["day_hours"], 24.0)
 
-    def test_unconfirmed_gap_is_not_assumed(self):
+    def test_state_carries_for_24_hours_without_arbitrary_cap(self):
         day = dt.date(2026, 11, 2)
         events = [
             (at(day, 0), "on", 1),
             (at(day + dt.timedelta(days=1), 0), "off", 2),
         ]
         d = hist.daily_totals([day], events, at(day + dt.timedelta(days=1), 1))[day.isoformat()]
-        self.assertEqual(d["on_hours"], 12.0)
+        self.assertEqual(d["on_hours"], 24.0)
         self.assertEqual(d["off_hours"], 0.0)
-        self.assertEqual(d["unknown_hours"], 12.0)
+        self.assertEqual(d["unknown_hours"], 0.0)
+
+    def test_state_carries_across_midnight(self):
+        day = dt.date(2026, 11, 8)
+        events = [
+            (at(day - dt.timedelta(days=1), 20), "off", 1),
+            (at(day, 18), "on", 2),
+            (at(day + dt.timedelta(days=1), 3), "off", 3),
+        ]
+        d = hist.daily_totals([day], events, at(day + dt.timedelta(days=1), 4))[day.isoformat()]
+        self.assertEqual(d["off_hours"], 18.0)
+        self.assertEqual(d["on_hours"], 6.0)
+        self.assertEqual(d["unknown_hours"], 0.0)
+
+    def test_first_known_switch_does_not_backfill_unknown_start(self):
+        day = dt.date(2026, 11, 8)
+        events = [(at(day, 14), "off", 1)]
+        d = hist.daily_totals([day], events, at(day + dt.timedelta(days=1), 1))[day.isoformat()]
+        self.assertEqual(d["unknown_hours"], 14.0)
+        self.assertEqual(d["off_hours"], 10.0)
+
+    def test_duplicate_state_notice_does_not_double_count(self):
+        day = dt.date(2026, 11, 8)
+        events = [(at(day, 0), "off", 1), (at(day, 8), "off", 2),
+                  (at(day, 18), "on", 3)]
+        d = hist.daily_totals([day], events, at(day + dt.timedelta(days=1), 1))[day.isoformat()]
+        self.assertEqual(d["off_hours"], 18.0)
+        self.assertEqual(d["on_hours"], 6.0)
 
     def test_missing_events_remain_unknown(self):
         day = dt.date(2026, 11, 2)
@@ -55,6 +82,12 @@ class ActualHistoryTests(unittest.TestCase):
         self.assertEqual(d["on_hours"], 0.0)
         self.assertEqual(d["off_hours"], 0.0)
         self.assertEqual(d["unknown_hours"], 24.0)
+
+    def test_dst_spring_day_has_23_hours(self):
+        day = dt.date(2026, 3, 29)
+        d = hist.daily_totals([day], [], at(day + dt.timedelta(days=1), 1))[day.isoformat()]
+        self.assertEqual(d["day_hours"], 23.0)
+        self.assertEqual(d["unknown_hours"], 23.0)
 
     def test_dst_fall_day_has_25_hours(self):
         day = dt.date(2026, 10, 25)
