@@ -2,13 +2,13 @@
   "source": "ForumPrazkyi / тема 63",
   "group": "5.2",
   "topic_id": 63,
-  "updated_at": "2026-11-09T01:28:06.350954+00:00",
+  "updated_at": "2026-11-09T07:44:17.341321+00:00",
   "period_start": "2026-10-29",
   "period_end": "2026-11-08",
   "method": "explicit_switch_messages_and_bounded_intervals",
   "max_unconfirmed_interval_hours": 12.0,
-  "messages_examined": 134,
-  "switch_events_found": 86,
+  "messages_examined": 136,
+  "switch_events_found": 87,
   "reached_archive_boundary": true,
   "days": {
     "2026-10-29": {
