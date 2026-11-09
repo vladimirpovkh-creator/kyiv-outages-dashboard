@@ -18,7 +18,8 @@ SOURCE = "ForumPrazkyi / тема 63"
 TOPIC_ID = 63
 KYIV = ZoneInfo("Europe/Kyiv")
 UTC = dt.timezone.utc
-MAX_GAP = dt.timedelta(hours=12)
+# A confirmed transition stays in effect until the next confirmed transition.
+# No arbitrary duration cap: events can legitimately be >12 hours apart.
 MAX_MESSAGES = 4000
 OUTPUT = ROOT / "data" / "forum-prazkyi-actual-history.json"
 ARCHIVE = ROOT / "data" / "history.json"
@@ -83,18 +84,21 @@ async def read_events(start, now):
 
 
 def daily_totals(dates, events, now):
-    """Count only intervals from confirmed events, capped at 12h per notice.
+    """Account for every second using observed switch transitions.
 
-    The first observed event defines the first known state. Any earlier time
-    or gap over MAX_GAP is unknown. Cross-midnight periods use Kyiv local
-    midnights, including daylight-saving transitions.
+    A confirmed state carries forward across midnight, without a 12-hour cap,
+    until the next switch notice. The interval before the first observed event
+    remains unknown: a future event cannot establish its previous state.
+    This is event-based inference, not direct power-meter measurement.
+    DST and local-day boundaries are calculated in UTC.
     """
-    unique = {(stamp, mid): (stamp, state, mid) for stamp, state, mid in events}
+    unique = {(stamp, mid): (stamp, state, mid) for stamp, state, mid in events
+              if state in ("on", "off") and stamp <= now}
     ordered = sorted(unique.values(), key=lambda item: (item[0], item[2]))
     intervals = []
     for index, (start, state, _) in enumerate(ordered):
         next_start = ordered[index + 1][0] if index + 1 < len(ordered) else now
-        end = min(next_start, start + MAX_GAP, now)
+        end = min(next_start, now)
         if end > start:
             intervals.append((start, end, state))
 
@@ -108,10 +112,13 @@ def daily_totals(dates, events, now):
             overlap = (min(end, ending) - max(start, beginning)).total_seconds()
             if overlap > 0:
                 seconds[state] += overlap
+        if seconds["on"] + seconds["off"] > possible + 0.01:
+            raise ValueError("Overlapping events exceed local day duration")
+        unknown_seconds = max(0.0, possible - seconds["on"] - seconds["off"])
         on = round(seconds["on"] / 3600, 4)
         off = round(seconds["off"] / 3600, 4)
         total = round(possible / 3600, 4)
-        unknown = round(max(0.0, possible - seconds["on"] - seconds["off"]) / 3600, 4)
+        unknown = round(unknown_seconds / 3600, 4)
         output[day.isoformat()] = {
             "on_hours": on,
             "off_hours": off,
@@ -134,13 +141,14 @@ def build_result(dates, events, now, inspected, reached_boundary):
         "period_start": dates[0].isoformat() if dates else None,
         "period_end": dates[-1].isoformat() if dates else None,
         "method": "explicit_switch_messages_and_bounded_intervals",
-        "max_unconfirmed_interval_hours": MAX_GAP.total_seconds() / 3600,
+        "interval_policy": "state_carries_until_next_confirmed_switch",
+        "max_unconfirmed_interval_hours": None,
         "messages_examined": inspected,
         "switch_events_found": len(events),
         "reached_archive_boundary": reached_boundary,
         "days": days,
         "totals": total,
-        "note": "Оцінка лише за повідомленнями про фактичне перемикання світла; непідтверджені проміжки враховані як невідомі. Це не дані лічильника.",
+        "note": "Оцінка за повідомленнями про перемикання: кожен відомий стан переноситься до наступного повідомлення, без довільного ліміту в 12 годин. Пропущені повідомлення можуть змінити оцінку; до першого підтвердженого стану час невідомий. Це не дані лічильника.",
     }
 
 
