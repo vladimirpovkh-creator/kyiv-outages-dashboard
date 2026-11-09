@@ -2,21 +2,22 @@
   "source": "ForumPrazkyi / тема 63",
   "group": "5.2",
   "topic_id": 63,
-  "updated_at": "2026-11-09T13:31:32.432265+00:00",
+  "updated_at": "2026-11-09T13:59:49.835131+00:00",
   "period_start": "2026-10-29",
   "period_end": "2026-11-08",
   "method": "explicit_switch_messages_and_bounded_intervals",
-  "max_unconfirmed_interval_hours": 12.0,
+  "interval_policy": "state_carries_until_next_confirmed_switch",
+  "max_unconfirmed_interval_hours": null,
   "messages_examined": 137,
   "switch_events_found": 88,
   "reached_archive_boundary": true,
   "days": {
     "2026-10-29": {
-      "on_hours": 12.1953,
+      "on_hours": 13.7725,
       "off_hours": 10.2275,
-      "unknown_hours": 1.5772,
+      "unknown_hours": 0.0,
       "day_hours": 24.0,
-      "covered_hours": 22.4228
+      "covered_hours": 24.0
     },
     "2026-10-30": {
       "on_hours": 11.2411,
@@ -82,19 +83,19 @@
       "covered_hours": 24.0
     },
     "2026-11-08": {
-      "on_hours": 2.9714,
+      "on_hours": 11.9036,
       "off_hours": 12.0964,
-      "unknown_hours": 8.9322,
+      "unknown_hours": 0.0,
       "day_hours": 24.0,
-      "covered_hours": 15.0678
+      "covered_hours": 24.0
     }
   },
   "totals": {
-    "on_hours": 126.29,
+    "on_hours": 136.8,
     "off_hours": 127.2,
-    "unknown_hours": 10.509,
+    "unknown_hours": 0.0,
     "day_hours": 264.0,
-    "covered_hours": 253.491
+    "covered_hours": 264.0
   },
-  "note": "Оцінка лише за повідомленнями про фактичне перемикання світла; непідтверджені проміжки враховані як невідомі. Це не дані лічильника."
+  "note": "Оцінка за повідомленнями про перемикання: кожен відомий стан переноситься до наступного повідомлення, без довільного ліміту в 12 годин. Пропущені повідомлення можуть змінити оцінку; до першого підтвердженого стану час невідомий. Це не дані лічильника."
 }
