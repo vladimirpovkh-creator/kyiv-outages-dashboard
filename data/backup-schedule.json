@@ -1,6 +1,6 @@
 {
   "source": "https://dtek-api.svitlo-proxy.workers.dev/",
-  "checked_at": "2026-11-10T13:45:19.108624+00:00",
+  "checked_at": "2026-11-10T14:58:10.940838+00:00",
   "days": {
     "2026-11-10": {
       "GPV1.1": {
@@ -258,7 +258,7 @@
         "18": "no",
         "19": "no",
         "20": "no",
-        "21": "yes",
+        "21": "first",
         "22": "yes",
         "23": "yes",
         "24": "second"
