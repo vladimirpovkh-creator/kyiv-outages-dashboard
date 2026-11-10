@@ -58,6 +58,25 @@ class DashboardChecks(unittest.TestCase):
         self.assertIn('id="forumTopState"', HTML)
         self.assertNotIn('id="archiveInfo"', HTML)
 
+    def test_archive_period_controls_and_shared_dates(self):
+        for fragment in (
+            'id="archivePeriod"',
+            '<option value="all">Весь архів</option>',
+            '<option value="7">Останні 7 днів</option>',
+            '<option value="14">Останні 14 днів</option>',
+            '<option value="custom">Власний період</option>',
+            'id="archiveFrom" type="date"',
+            'id="archiveTo" type="date"',
+            'periodCustom.hidden=periodSelect.value!=="custom"',
+            'available.slice(-Number(periodSelect.value))',
+            'available.filter(d=>d>=periodFrom.value&&d<=periodTo.value)',
+            'archiveDates=dates;',
+            'periodSelect.addEventListener("change",updateArchiveRanking)',
+        ):
+            self.assertIn(fragment, HTML)
+        self.assertIn('const d=archiveDates.map(date=>h.days[date])', HTML)
+        self.assertIn('const dates=archiveDates.map(date=>({date,...h.days[date]}))', HTML)
+
     def test_actual_outages_use_hours_and_minutes(self):
         self.assertIn('function formatActualDuration(hours){const minutes=Math.round(Number(hours)*60)', HTML)
         self.assertIn('String(m).padStart(2,"0")+" хв"', HTML)
