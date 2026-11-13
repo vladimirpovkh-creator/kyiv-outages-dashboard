@@ -2,14 +2,14 @@
   "source": "ForumPrazkyi / тема 63",
   "group": "5.2",
   "topic_id": 63,
-  "updated_at": "2026-11-12T19:14:01.170365+00:00",
+  "updated_at": "2026-11-13T01:26:39.895505+00:00",
   "period_start": "2026-10-29",
-  "period_end": "2026-11-11",
+  "period_end": "2026-11-12",
   "method": "explicit_switch_messages_and_bounded_intervals",
   "interval_policy": "state_carries_until_next_confirmed_switch",
   "max_unconfirmed_interval_hours": null,
-  "messages_examined": 176,
-  "switch_events_found": 115,
+  "messages_examined": 181,
+  "switch_events_found": 118,
   "reached_archive_boundary": true,
   "days": {
     "2026-10-29": {
@@ -109,14 +109,21 @@
       "unknown_hours": 0.0,
       "day_hours": 24.0,
       "covered_hours": 24.0
+    },
+    "2026-11-12": {
+      "on_hours": 8.8172,
+      "off_hours": 15.1828,
+      "unknown_hours": 0.0,
+      "day_hours": 24.0,
+      "covered_hours": 24.0
     }
   },
   "totals": {
-    "on_hours": 166.42,
-    "off_hours": 169.58,
+    "on_hours": 175.238,
+    "off_hours": 184.762,
     "unknown_hours": 0.0,
-    "day_hours": 336.0,
-    "covered_hours": 336.0
+    "day_hours": 360.0,
+    "covered_hours": 360.0
   },
   "note": "Оцінка за повідомленнями про перемикання: кожен відомий стан переноситься до наступного повідомлення, без довільного ліміту в 12 годин. Пропущені повідомлення можуть змінити оцінку; до першого підтвердженого стану час невідомий. Це не дані лічильника."
 }
