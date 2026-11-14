@@ -1,7 +1,7 @@
 {
   "state": "off",
   "changed_at": "2026-11-14T20:41:43+00:00",
-  "checked_at": "2026-11-14T21:56:23.905726+00:00",
+  "checked_at": "2026-11-14T22:27:58.130114+00:00",
   "source": "ForumPrazkyi / тема 63",
   "group": "5.2",
   "place": "ЖК Форум Празький",
@@ -9,5 +9,5 @@
   "message_id": 5773,
   "last_update_id": 0,
   "topic_messages_read": 100,
-  "topic_events_recognized": 72
+  "topic_events_recognized": 71
 }
