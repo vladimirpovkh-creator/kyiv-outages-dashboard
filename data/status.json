@@ -1,9 +1,9 @@
 {
-  "checked_at": "2026-11-15T20:03:12.828195+02:00",
+  "checked_at": "2026-11-16T20:20:47.797089+02:00",
   "source": "https://www.dtek-krem.com.ua/ua/shutdowns",
   "source_status": "reachable",
   "confirmed_daily_schedules": false,
   "data_status": "not_connected",
   "message": "Сторінка ДТЕК доступна, але машинозчитувані графіки для всіх черг ще не підтверджені.",
-  "page_sha256": "6c48a6bf4814b8478153e0d4d0ac9e90ce126c961440e609d94db1c4acb5dbbf"
+  "page_sha256": "f61eab76492963a47149cb3fa9875405bec55788f86dbb8d4e92f118e4363197"
 }
