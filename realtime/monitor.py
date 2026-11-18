@@ -45,7 +45,7 @@ def choose_latest(messages, now):
     for msg in messages:
         state = classify(getattr(msg, "raw_text", "") or "")
         stamp = utc(msg.date)
-        if state and now - MAX_AGE <= stamp <= now + dt.timedelta(minutes=5):
+        if state and stamp <= now + dt.timedelta(minutes=5):
             candidates.append((stamp, msg.id, state))
     if not candidates:
         return None
@@ -60,11 +60,13 @@ class Store:
         try:
             previous = json.loads(STATE_PATH.read_text(encoding="utf-8"))
             # Load latest event only; do not reuse old check-time as an active connection.
-            if previous.get("state") in ("on", "off") and previous.get("changed_at"):
+            remembered_state = previous.get("last_known_state") or previous.get("state")
+            remembered_time = previous.get("last_known_changed_at") or previous.get("changed_at")
+            if remembered_state in ("on", "off") and remembered_time:
                 self.current = {
-                    "state": previous["state"],
-                    "changed_at": previous["changed_at"],
-                    "message_id": previous.get("message_id"),
+                    "state": remembered_state,
+                    "changed_at": remembered_time,
+                    "message_id": previous.get("last_known_message_id", previous.get("message_id")),
                 }
         except (OSError, ValueError, TypeError):
             pass
@@ -79,6 +81,8 @@ class Store:
                 self.current = candidate
         self.last_sync = now
         data = self.payload(now)
+        # Persist the last recognized transition separately, including once stale.
+        # Otherwise an expired status would be irreversibly lost on restart.
         temp = STATE_PATH.with_suffix(".tmp")
         temp.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
         temp.replace(STATE_PATH)
@@ -92,8 +96,9 @@ class Store:
             changed = dt.datetime.fromisoformat(changed_text) if changed_text else None
         except (ValueError, TypeError):
             changed = None
-        fresh = changed is not None and dt.timedelta(0) <= now - changed < MAX_AGE
-        active = connected and fresh and state in ("on", "off")
+        known = state in ("on", "off") and changed is not None and changed <= now + dt.timedelta(minutes=5)
+        fresh = known and dt.timedelta(0) <= now - changed < MAX_AGE
+        active = connected and fresh
         return {
             "state": state if active else "unknown",
             "changed_at": changed_text if active else None,
@@ -101,7 +106,14 @@ class Store:
             "group": "5.2",
             "source": "ForumPrazkyi / тема 63",
             "message_id": (self.current or {}).get("message_id") if active else None,
-            "reason": "Останнє підтверджене перемикання" if active else "Немає актуального підтвердженого стану або зв'язку",
+            "last_known_state": state if known else None,
+            "last_known_changed_at": changed_text if known else None,
+            "last_known_message_id": (self.current or {}).get("message_id") if known else None,
+            "confirmation": "current" if active else ("stale" if known else "missing"),
+            "reason": "Останнє підтверджене перемикання" if active else (
+                "Останній стан застарів або немає зв'язку з монітором" if known
+                else "Немає підтверджених повідомлень про стан мережі"
+            ),
         }
 
 
