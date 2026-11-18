@@ -49,6 +49,11 @@ class DashboardChecks(unittest.TestCase):
         self.assertIn('el("forumTopState").textContent=is52?state', HTML)
         self.assertIn('data/forum-prazkyi-status.json', HTML)
 
+    def test_hide_duration_for_power_on_over_24h(self):
+        self.assertIn('data.state==="on"&&now-t>=24*3600000?"":', HTML)
+        self.assertIn('const duration=active?', HTML)
+        self.assertIn('el("forumTopDuration").textContent=is52?duration', HTML)
+
     def test_archive_52_historical_telegram_stats(self):
         self.assertIn('className="ranking-fact"', HTML)
         self.assertIn('if(r.group==="5.2"){const fact=', HTML)
