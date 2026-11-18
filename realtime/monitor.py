@@ -19,7 +19,6 @@ from monitor_forum_prazkyi import classify
 LOG = logging.getLogger("forum-realtime")
 UTC = dt.timezone.utc
 TOPIC_ID = 63
-MAX_AGE = dt.timedelta(hours=24)
 SYNC_STALE = dt.timedelta(minutes=2)
 ORIGIN = "https://vladimirpovkh-creator.github.io"
 PORT = int(os.environ.get("PORT", "8080"))
@@ -97,8 +96,9 @@ class Store:
         except (ValueError, TypeError):
             changed = None
         known = state in ("on", "off") and changed is not None and changed <= now + dt.timedelta(minutes=5)
-        fresh = known and dt.timedelta(0) <= now - changed < MAX_AGE
-        active = connected and fresh
+        # The last observed transition persists until a newer transition arrives.
+        # Freshness of the Telegram reconciliation, not the event age, determines availability.
+        active = connected and known
         return {
             "state": state if active else "unknown",
             "changed_at": changed_text if active else None,
@@ -110,8 +110,8 @@ class Store:
             "last_known_changed_at": changed_text if known else None,
             "last_known_message_id": (self.current or {}).get("message_id") if known else None,
             "confirmation": "current" if active else ("stale" if known else "missing"),
-            "reason": "Останнє підтверджене перемикання" if active else (
-                "Останній стан застарів або немає зв'язку з монітором" if known
+            "reason": "Останній відомий стан за повідомленнями Telegram; нових перемикань не знайдено" if active else (
+                "Немає свіжої перевірки Telegram; показано лише останній відомий стан" if known
                 else "Немає підтверджених повідомлень про стан мережі"
             ),
         }
