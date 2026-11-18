@@ -55,6 +55,23 @@ class LiveMonitorTests(unittest.TestCase):
             finally:
                 monitor.STATE_PATH=old
 
+    def test_multi_day_on_state_remains_active_when_synced(self):
+        now=dt.datetime(2026,11,18,18,0,tzinfo=UTC)
+        with tempfile.TemporaryDirectory() as folder:
+            old=monitor.STATE_PATH
+            try:
+                monitor.STATE_PATH=pathlib.Path(folder)/"status.json"
+                store=monitor.Store()
+                store.apply((now-dt.timedelta(days=4),5001,"on"),now)
+                data=store.payload(now)
+                self.assertEqual(data["state"],"on")
+                self.assertEqual(data["confirmation"],"current")
+                self.assertEqual(data["changed_at"],(now-dt.timedelta(days=4)).isoformat())
+                self.assertEqual(store.payload(now+dt.timedelta(minutes=3))["state"],"unknown")
+                self.assertEqual(store.payload(now+dt.timedelta(minutes=3))["last_known_state"],"on")
+            finally:
+                monitor.STATE_PATH=old
+
     def test_staleness_and_freshness(self):
         now=dt.datetime(2026,11,8,7,51,tzinfo=UTC)
         with tempfile.TemporaryDirectory() as folder:
@@ -67,9 +84,9 @@ class LiveMonitorTests(unittest.TestCase):
                 self.assertEqual(store.payload(now+dt.timedelta(seconds=121))["state"],"unknown")
                 store.last_sync=now+dt.timedelta(hours=24)
                 stale=store.payload(now+dt.timedelta(hours=24))
-                self.assertEqual(stale["state"],"unknown")
+                self.assertEqual(stale["state"],"off")
                 self.assertEqual(stale["last_known_state"],"off")
-                self.assertEqual(stale["confirmation"],"stale")
+                self.assertEqual(stale["confirmation"],"current")
                 self.assertEqual(stale["last_known_changed_at"],(now-dt.timedelta(minutes=7)).isoformat())
             finally:
                 monitor.STATE_PATH=previous
