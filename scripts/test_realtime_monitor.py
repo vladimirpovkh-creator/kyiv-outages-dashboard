@@ -34,6 +34,27 @@ class LiveMonitorTests(unittest.TestCase):
         winner = monitor.choose_latest(messages, now)
         self.assertEqual(winner[1:], (4883, "off"))
 
+    def test_choose_latest_keeps_event_older_than_24_hours(self):
+        now=dt.datetime(2026,11,18,18,0,tzinfo=UTC)
+        messages=[types.SimpleNamespace(id=5001,date=now-dt.timedelta(hours=36),raw_text="Світло увімкнулось!")]
+        winner=monitor.choose_latest(messages,now)
+        self.assertEqual(winner[1:],(5001,"on"))
+
+    def test_expired_state_survives_restart(self):
+        now=dt.datetime(2026,11,18,18,0,tzinfo=UTC)
+        with tempfile.TemporaryDirectory() as folder:
+            old=monitor.STATE_PATH
+            try:
+                monitor.STATE_PATH=pathlib.Path(folder)/"status.json"
+                store=monitor.Store()
+                store.apply((now-dt.timedelta(hours=40),5001,"on"),now)
+                restarted=monitor.Store()
+                self.assertEqual(restarted.current["state"],"on")
+                self.assertEqual(restarted.payload(now)["state"],"unknown")
+                self.assertEqual(restarted.payload(now)["last_known_state"],"on")
+            finally:
+                monitor.STATE_PATH=old
+
     def test_staleness_and_freshness(self):
         now=dt.datetime(2026,11,8,7,51,tzinfo=UTC)
         with tempfile.TemporaryDirectory() as folder:
@@ -45,7 +66,11 @@ class LiveMonitorTests(unittest.TestCase):
                 self.assertEqual(store.payload(now)["state"],"off")
                 self.assertEqual(store.payload(now+dt.timedelta(seconds=121))["state"],"unknown")
                 store.last_sync=now+dt.timedelta(hours=24)
-                self.assertEqual(store.payload(now+dt.timedelta(hours=24))["state"],"unknown")
+                stale=store.payload(now+dt.timedelta(hours=24))
+                self.assertEqual(stale["state"],"unknown")
+                self.assertEqual(stale["last_known_state"],"off")
+                self.assertEqual(stale["confirmation"],"stale")
+                self.assertEqual(stale["last_known_changed_at"],(now-dt.timedelta(minutes=7)).isoformat())
             finally:
                 monitor.STATE_PATH=previous
 
