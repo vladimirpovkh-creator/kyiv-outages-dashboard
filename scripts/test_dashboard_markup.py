@@ -32,6 +32,12 @@ class DashboardChecks(unittest.TestCase):
         ):
             self.assertNotIn(fragment, HTML)
 
+    def test_last_known_status_shows_uncertainty(self):
+        self.assertIn('data.last_known_state', HTML)
+        self.assertIn('data.last_known_changed_at', HTML)
+        self.assertIn('Останній стан: ', HTML)
+        self.assertIn('Не підтверджено · ', HTML)
+
     def test_top_fact_allows_24h_old_confirmation(self):
         self.assertIn("now-t<24*3600000", HTML)
         self.assertNotIn("now-t<12*3600000", HTML)
