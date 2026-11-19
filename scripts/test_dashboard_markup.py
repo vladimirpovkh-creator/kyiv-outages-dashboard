@@ -49,6 +49,12 @@ class DashboardChecks(unittest.TestCase):
         self.assertIn('el("forumTopState").textContent=is52?state', HTML)
         self.assertIn('data/forum-prazkyi-status.json', HTML)
 
+    def test_power_on_typography_moderate_and_cards_equal_height(self):
+        self.assertIn(".stats > .panel{align-self:stretch!important;height:100%}", HTML)
+        self.assertIn(".stats .actual-card.power-on .metric-caption{font-size:clamp(17px,2.5vw,22px)!important", HTML)
+        self.assertIn("@media(max-width:600px){.stats .actual-card.power-on .metric-caption{font-size:clamp(16px,4vw,19px)!important}}", HTML)
+        self.assertIn('classList.toggle("power-on",is52&&active&&data.state==="on")', HTML)
+
     def test_hide_duration_for_power_on_over_24h(self):
         self.assertIn('data.state==="on"&&now-t>=24*3600000?"":', HTML)
         self.assertIn('const duration=active?', HTML)
