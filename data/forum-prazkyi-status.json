@@ -1,13 +1,13 @@
 {
-  "state": "on",
-  "changed_at": "2026-11-20T16:31:39+00:00",
-  "checked_at": "2026-11-20T22:55:02.418417+00:00",
+  "state": "off",
+  "changed_at": "2026-11-20T23:11:55+00:00",
+  "checked_at": "2026-11-20T23:38:06.332156+00:00",
   "source": "ForumPrazkyi / тема 63",
   "group": "5.2",
   "place": "ЖК Форум Празький",
   "reason": "Підтверджене повідомлення Telegram-теми 63",
-  "message_id": 6260,
+  "message_id": 6288,
   "last_update_id": 0,
   "topic_messages_read": 100,
-  "topic_events_recognized": 67
+  "topic_events_recognized": 68
 }
