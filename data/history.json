@@ -8595,8 +8595,8 @@
         "9": "no",
         "10": "no",
         "11": "no",
-        "12": "yes",
-        "13": "yes",
+        "12": "no",
+        "13": "first",
         "14": "yes",
         "15": "yes",
         "16": "yes",
@@ -8621,8 +8621,8 @@
         "9": "no",
         "10": "no",
         "11": "no",
-        "12": "yes",
-        "13": "yes",
+        "12": "no",
+        "13": "first",
         "14": "yes",
         "15": "yes",
         "16": "yes",
@@ -8793,8 +8793,8 @@
       }
     }
   },
-  "updated_at": "2026-11-25T06:24:57.796353+00:00",
+  "updated_at": "2026-11-25T18:12:48.092559+00:00",
   "source": "https://raw.githubusercontent.com/Baskerville42/outage-data-ua/main/data/kyiv-region.json",
-  "source_updated_at": "2026-11-25T06:21:06.255Z",
+  "source_updated_at": "2026-11-25T18:06:01.559Z",
   "note": "Validated 24 hourly fields per 12 groups. Changes are snapshots of the latest published schedules, not measured outages."
 }
